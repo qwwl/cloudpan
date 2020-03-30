@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"time"
 
+	jsoniter "github.com/json-iterator/go"
 	echo "github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -15,6 +16,21 @@ var e *echo.Echo
 type Option func(*echo.Echo)
 
 var ops = make([]Option, 0, 100)
+
+type AlphaContext struct {
+	echo.Context
+}
+
+func (c *AlphaContext) JSON(code int, i interface{}) error {
+	enc := jsoniter.NewEncoder(c.Response())
+	enc.SetIndent("", "  ")
+	header := c.Response().Header()
+	if header.Get(echo.HeaderContentType) == "" {
+		header.Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+	}
+	c.Response().Status = code
+	return enc.Encode(i)
+}
 
 func WarpEcho(e *echo.Echo, os ...Option) {
 	for _, v := range os {
@@ -27,6 +43,12 @@ func initRouter() {
 		e.Close()
 	}()
 	e = echo.New()
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cc := &AlphaContext{c}
+			return next(cc)
+		}
+	})
 	e.Use(ZeroLoggerWithConfig(LoggerConfig{
 		Skipper: middleware.DefaultSkipper,
 		Format: `{"time":"${time_rfc3339_nano}","remote_ip":"${remote_ip}",` +

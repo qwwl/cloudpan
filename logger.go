@@ -117,7 +117,7 @@ func ZeroLoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 			res := c.Response()
 			start := time.Now()
 			if err = next(c); err != nil {
-				c.Error(err)
+				logger.Fatal().Msg(err.Error())
 			}
 			stop := time.Now()
 
