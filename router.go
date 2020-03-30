@@ -14,7 +14,7 @@ var e *echo.Echo
 
 type Option func(*echo.Echo)
 
-var ops = make([]Option, 0, 10)
+var ops = make([]Option, 0, 100)
 
 func WarpEcho(e *echo.Echo, os ...Option) {
 	for _, v := range os {

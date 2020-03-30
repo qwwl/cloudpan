@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -8,9 +9,10 @@ import (
 )
 
 var connectionDB *gorm.DB
+var dbs sync.Map
 
 func initDB() {
-	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8&timeout=5s"
+	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8mb4&timeout=5s"
 	for i := 0; i < 5; i++ {
 		conn, err := gorm.Open("mysql", path)
 		if err != nil {
@@ -18,7 +20,12 @@ func initDB() {
 			continue
 		}
 		connectionDB = conn
+		connectionDB.LogMode(true)
 		logger.Info().Msg("初始化DB成功")
+		dbs.Range(func(key, value interface{}) bool {
+			connectionDB.AutoMigrate(value)
+			return true
+		})
 		return
 	}
 	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
