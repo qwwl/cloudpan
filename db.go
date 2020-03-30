@@ -20,7 +20,7 @@ func initDB() {
 			continue
 		}
 		connectionDB = conn
-		connectionDB.LogMode(true)
+		connectionDB.LogMode(conf.DBDebug)
 		logger.Info().Msg("初始化DB成功")
 		dbs.Range(func(key, value interface{}) bool {
 			connectionDB.AutoMigrate(value)
@@ -60,6 +60,6 @@ func Database() *gorm.DB {
 		connectionDB = connectToDB()
 		connected = connectionDB.DB().Ping()
 	}
-	connectionDB.LogMode(true)
+	connectionDB.LogMode(conf.DBDebug)
 	return connectionDB
 }

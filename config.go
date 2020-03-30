@@ -19,6 +19,7 @@ type Config struct {
 	DBUsername string //DB用户
 	DBPassword string //DB密码
 	DBName     string //DB数据库
+	DBDebug    bool   //开启数据库sql语句
 
 	Port string //http端口
 }

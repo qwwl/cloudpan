@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	_ "expvar"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"time"
@@ -42,7 +45,11 @@ func initRouter() {
 	defer func() {
 		e.Close()
 	}()
+
 	e = echo.New()
+	e.GET("/debug/vars", echo.WrapHandler(http.DefaultServeMux))
+	e.GET("/debug/pprof/", echo.WrapHandler(http.DefaultServeMux))
+	e.GET("/debug/pprof/*", echo.WrapHandler(http.DefaultServeMux))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cc := &AlphaContext{c}
@@ -57,7 +64,7 @@ func initRouter() {
 			`,"bytes_in":${bytes_in},"bytes_out":${bytes_out}}` + "\n",
 		CustomTimeFormat: "2006-01-02 15:04:05.00000",
 		Output:           logger,
-	}), middleware.Recover(), middleware.CORS(), middleware.Gzip())
+	}), middleware.Recover(), middleware.CORS())
 	e.HideBanner = true
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")

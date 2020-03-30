@@ -16,6 +16,7 @@ DBPort="3306"
 DBUsername="root"
 DBPassword="password"
 DBName="test"
+DBDebug=true
 #端口号
 Port=":8080"
 #develop
@@ -33,5 +34,6 @@ DBPort="3306"
 DBUsername="root"
 DBPassword="root123456"
 DBName="test"
+DBDebug=true
 #端口号
 Port=":8080"
