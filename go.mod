@@ -1,4 +1,4 @@
-module cloudpan
+module github.com/qwwl/cloudpan
 
 go 1.14
 
