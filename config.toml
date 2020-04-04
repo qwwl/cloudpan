@@ -17,6 +17,8 @@ DBUsername="root"
 DBPassword="password"
 DBName="test"
 DBDebug=true
+MaxOpenConns=999
+MaxIdleConns=100
 #端口号
 Port=":8080"
 #develop
@@ -35,5 +37,7 @@ DBUsername="root"
 DBPassword="root123456"
 DBName="test"
 DBDebug=true
+MaxOpenConns=999
+MaxIdleConns=99
 #端口号
 Port=":8080"

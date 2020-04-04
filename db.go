@@ -21,6 +21,8 @@ func initDB() {
 		}
 		connectionDB = conn
 		connectionDB.LogMode(conf.DBDebug)
+		connectionDB.DB().SetMaxOpenConns(conf.MaxOpenConns)
+		connectionDB.DB().SetMaxIdleConns(conf.MaxIdleConns)
 		logger.Info().Msg("初始化DB成功")
 		dbs.Range(func(key, value interface{}) bool {
 			connectionDB.AutoMigrate(value)
@@ -61,5 +63,7 @@ func Database() *gorm.DB {
 		connected = connectionDB.DB().Ping()
 	}
 	connectionDB.LogMode(conf.DBDebug)
+	connectionDB.DB().SetMaxOpenConns(conf.MaxOpenConns)
+	connectionDB.DB().SetMaxIdleConns(conf.MaxIdleConns)
 	return connectionDB
 }
